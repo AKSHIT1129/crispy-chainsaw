@@ -99,5 +99,6 @@ python python/train_classifier.py --empty datasets/empty_room.csv --motion datas
 
 ## References
 
-* **ESP32-CSI-Tool:** Steven M. Hernandez (https://github.com/stevenmhernandez/ESP32-CSI-Tool)
 * **Espressif ESP-CSI:** Espressif Systems (https://github.com/espressif/esp-csi)
+* **ESP32-CSI-Tool:** Steven M. Hernandez (https://github.com/stevenmhernandez/ESP32-CSI-Tool)
+* ESP32 CSI Toolkit Website (https://stevenmhernandez.github.io/ESP32-CSI-Tool/)
