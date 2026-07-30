@@ -30,11 +30,11 @@ def main():
             ser = serial.Serial(args.port, args.baud, timeout=0.1)
             print(f"Streaming live hardware CSI from {args.port}...")
         except serial.SerialException as e:
-            print(f"❌ Failed to open port {args.port}: {e}")
-            print("💡 Tip: Add --demo flag to run real-time visualization without physical ESP32.")
+            print(f"Failed to open port {args.port}: {e}")
+            print("Tip: Add --demo flag to run real-time visualization without physical ESP32.")
             sys.exit(1)
     else:
-        print("🎮 Running real-time visualizer in DEMO MODE...")
+        print("Running real-time visualizer in DEMO MODE...")
 
     time_window = args.window
     num_subcarriers = 64
@@ -57,7 +57,6 @@ def main():
         step_counter += 1
 
         if args.demo:
-            # Generate simulated motion wave
             new_sample = 15 * np.sin(0.1 * step_counter + np.linspace(0, np.pi, num_subcarriers))
             new_sample += np.random.normal(0, 1.5, num_subcarriers)
             data_buffer = np.roll(data_buffer, -1, axis=0)

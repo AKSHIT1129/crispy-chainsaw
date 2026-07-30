@@ -1,99 +1,103 @@
 # Crispy Chainsaw: Through-Wall Wi-Fi Presence & Motion Sensing
 
-An open-source hardware and software project for detecting human presence, movement, and motion through solid walls using Wi-Fi **Channel State Information (CSI)** and Machine Learning.
+An open-source hardware and software framework for detecting human presence and motion through solid walls using Wi-Fi Channel State Information (CSI) and machine learning.
 
 ---
 
-## 📌 Project Overview
+## Overview
 
-Traditional through-wall sensing relies on costly mmWave radar or thermal imaging. This project leverages standard **2.4 GHz / 5 GHz Wi-Fi radio waves** emitted by affordable microcontrollers (ESP32). 
+Traditional through-wall motion detection relies on specialized mmWave radar or thermal imaging systems. This project utilizes standard 2.4 GHz / 5 GHz Wi-Fi radio signals transmitted by low-cost microcontrollers (ESP32).
 
-As Wi-Fi signals travel through obstacles, human bodies reflect and scatter subcarrier waves. By capturing CSI matrices (Amplitude & Phase per OFDM subcarrier), filtering static wall clutter, and feeding micro-Doppler signals into a machine learning classifier, we can detect whether a person is present or moving behind a wall in real time.
-
----
-
-## 🛠️ Hardware Requirements (Bill of Materials)
-
-* **2× ESP32 Microcontrollers** (ESP32-WROOM-32 or ESP32-S3)
-  * **Transmitter (Tx):** Configured as an Access Point (AP) sending continuous Wi-Fi ping frames.
-  * **Receiver (Rx):** Configured as a Station (STA) extracting raw CSI subcarrier data.
-* **2× Data-capable Micro-USB / USB-C Cables**
-* **1× Host PC** (Windows / macOS / Linux) running Python 3.10+
-* *(Optional)* 2× 2.4 GHz directional antennas for extended wall penetration.
+As Wi-Fi signals propagate through obstacles, moving human bodies reflect and scatter subcarrier radio waves. By capturing CSI matrices (Amplitude and Phase per OFDM subcarrier), filtering static environmental clutter, and extracting micro-Doppler signals, the system classifies human presence and motion behind walls in real time.
 
 ---
 
-## 💻 Software & Tool Requirements
+## Hardware Requirements
 
-* **IDE / Firmware Compiler:** [PlatformIO for VS Code](https://platformio.org/) or [Arduino IDE 2.x](https://www.arduino.cc/en/software)
-* **USB-to-UART Drivers:** [CP210x Drivers](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) or [CH340 Drivers](http://www.wch-ic.com/downloads/CH341SER_EXE.html)
-* **Python Environment:** Python 3.10 or higher
+| Component | Quantity | Description |
+| :--- | :--- | :--- |
+| ESP32 Microcontroller | 2 | ESP32-WROOM-32 or ESP32-S3 boards (Transmitter and Receiver) |
+| Micro-USB / USB-C Cables | 2 | Data-capable cables for power and UART serial data streaming |
+| Host Computer | 1 | Workstation running Windows, macOS, or Linux with Python 3.10+ |
+| Directional Antennas | 2 | (Optional) 2.4 GHz antennas for focused signal penetration |
 
 ---
 
-## 📂 Repository Structure
+## Software Prerequisites
+
+* **Development Environment:** PlatformIO for VS Code or Arduino IDE 2.x
+* **USB-to-UART Drivers:** Silicon Labs CP210x or WCH CH340 drivers
+* **Python Runtime:** Python 3.10 or higher
+
+---
+
+## Repository Structure
 
 ```text
 crispy-chainsaw/
 ├── firmware/
-│   ├── transmitter/           # ESP32 C++ code for Wi-Fi Packet Sender (Tx)
-│   └── receiver/              # ESP32 C++ code for CSI Extraction (Rx)
+│   ├── transmitter/           # ESP32 C++ firmware for Wi-Fi Packet Sender (Tx)
+│   └── receiver/              # ESP32 C++ firmware for CSI Extraction (Rx)
 ├── python/
-│   ├── serial_collector.py    # Reads live CSI data from USB COM port to CSV
-│   ├── preprocess.py         # Signal filtering, static clutter removal & PCA
-│   ├── real_time_plotter.py   # Live subcarrier amplitude visualizer
+│   ├── serial_collector.py    # Logs raw CSI data from UART serial port to CSV
+│   ├── preprocess.py          # Signal filtering, static clutter removal, and PCA
+│   ├── real_time_plotter.py   # Real-time subcarrier amplitude visualizer
 │   └── train_classifier.py    # Machine learning model training script
-├── datasets/                  # Sample logged CSI data (empty room vs motion)
-├── models/                    # Trained Machine Learning models (.pkl / .pt)
-├── docs/                      # Schematics, signal processing pipeline docs
-├── requirements.txt           # Python dependencies
+├── datasets/                  # Logged CSI subcarrier CSV datasets
+├── models/                    # Serialized machine learning models (.pkl)
+├── docs/                      # System architecture and mathematical formulations
+├── requirements.txt           # Python package dependencies
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Install Python Dependencies
+### 1. Installation
+Install the required Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Flash Firmware to ESP32s
-1. Flash `firmware/transmitter` onto ESP32 #1.
-2. Flash `firmware/receiver` onto ESP32 #2.
-3. Mount both ESP32 boards firmly on tripods or flat surfaces across the target wall.
+### 2. Firmware Deployment
+1. Flash `firmware/transmitter` onto the Transmitter ESP32 board.
+2. Flash `firmware/receiver` onto the Receiver ESP32 board.
+3. Position both ESP32 units securely across the target wall.
 
-### 3. Collect Baseline & Motion Datasets
-Connect the Receiver ESP32 to your PC via USB and log serial data:
+### 3. Data Collection
+Connect the Receiver ESP32 to the host workstation via USB and record CSI streams:
 ```bash
 python python/serial_collector.py --port COM3 --baud 115200 --output datasets/empty_room.csv
 python python/serial_collector.py --port COM3 --baud 115200 --output datasets/motion_behind_wall.csv
 ```
 
-### 4. Visualize Subcarrier Waves in Real-Time
+### 4. Real-Time Visualization
+Run the live subcarrier visualizer:
 ```bash
 python python/real_time_plotter.py --port COM3
 ```
 
-### 5. Train Presence Detection Classifier
+### 5. Model Training
+Train the classification model:
 ```bash
 python python/train_classifier.py --empty datasets/empty_room.csv --motion datasets/motion_behind_wall.csv
 ```
 
 ---
 
-## 🔬 Signal Processing Pipeline
+## Signal Processing Pipeline
 
-1. **Raw Packet Capture:** Reads OFDM subcarrier amplitude and phase \( H(f, t) \).
-2. **Phase Sanitization:** Removes linear phase drift caused by clock desynchronization.
-3. **Static Clutter Removal:** Applies a high-pass Butterworth filter to subtract static wall/furniture reflections.
-4. **PCA Noise Reduction:** Extracts dominant motion variance components across subcarriers.
-5. **Feature Extraction & Classification:** Computes STFT spectrogram features and feeds them into an SVM / Random Forest classifier.
+1. **Packet Capture:** Extracts OFDM subcarrier amplitude and phase matrices.
+2. **Phase Sanitization:** Eliminates phase linear drift caused by clock desynchronization.
+3. **Static Clutter Filtering:** Applies a 4th-order Butterworth bandpass filter (0.2 Hz – 10 Hz) to remove static reflections.
+4. **Dimensionality Reduction:** Applies Principal Component Analysis (PCA) across subcarriers.
+5. **Classification:** Computes statistical feature vectors for Random Forest / SVM evaluation.
 
 ---
 
-## 📄 License & References
-* **[ESP32-CSI-Tool](https://github.com/stevenmhernandez/ESP32-CSI-Tool)** by Steven M. Hernandez
-* **[Espressif ESP-CSI Repository](https://github.com/espressif/esp-csi)**
+## References
+
+* **ESP32-CSI-Tool:** Steven M. Hernandez (https://github.com/stevenmhernandez/ESP32-CSI-Tool)
+* **Espressif ESP-CSI:** Espressif Systems (https://github.com/espressif/esp-csi)

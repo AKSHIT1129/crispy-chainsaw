@@ -4,8 +4,6 @@ Serial Collector Script for ESP32 CSI Data
 Reads raw Channel State Information (CSI) output from an ESP32 receiver board connected via USB Serial port
 and saves the parsed subcarrier amplitudes to a CSV file for training and analysis.
 
-Supports a `--demo` flag to simulate live hardware streams for testing without physical ESP32 boards!
-
 Usage:
     python python/serial_collector.py --port COM3 --baud 115200 --output datasets/sample_data.csv --samples 500
     python python/serial_collector.py --demo --output datasets/demo_data.csv --samples 300
@@ -40,7 +38,6 @@ def generate_demo_csi(sample_index, num_subcarriers=64):
     """Generates synthetic CSI packets with simulated human movement ripples."""
     timestamp = time.time()
     rssi = -45 + random.randint(-3, 3)
-    # Base signal with periodic Doppler shift
     base_wave = 15 * np.sin(2 * np.pi * 0.1 * sample_index + np.linspace(0, np.pi, num_subcarriers))
     noise = np.random.normal(0, 2, num_subcarriers)
     csi_values = (base_wave + noise).astype(int).tolist()
@@ -58,7 +55,7 @@ def main():
     collected = 0
 
     if args.demo:
-        print(f"🎮 Running in DEMO MODE (Simulating ESP32 CSI stream)...")
+        print("Running in DEMO MODE (Simulating ESP32 CSI stream)...")
         print(f"Logging simulated data to {args.output}...")
         with open(args.output, mode="w", newline="") as file:
             writer = csv.writer(file)
@@ -67,18 +64,18 @@ def main():
                 timestamp, rssi, csi_values = generate_demo_csi(collected)
                 writer.writerow([timestamp, rssi, " ".join(map(str, csi_values))])
                 collected += 1
-                time.sleep(0.02) # 50 Hz rate
+                time.sleep(0.02)
                 if collected % 100 == 0:
                     print(f"Logged {collected} simulated packets...")
-        print(f"✅ Demo logging complete! Saved {collected} packets to {args.output}")
+        print(f"Demo logging complete. Saved {collected} packets to {args.output}")
         return
 
     print(f"Connecting to hardware on {args.port} at {args.baud} baud...")
     try:
         ser = serial.Serial(args.port, args.baud, timeout=1)
     except serial.SerialException as e:
-        print(f"❌ Error opening port {args.port}: {e}")
-        print("💡 Tip: Use --demo flag to test without physical hardware.")
+        print(f"Error opening port {args.port}: {e}")
+        print("Tip: Use --demo flag to test without physical hardware.")
         sys.exit(1)
 
     print(f"Logging hardware data to {args.output}...")
