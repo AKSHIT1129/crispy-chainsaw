@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments & Virtual Envs
+.venv/
+env/
+venv/
+ENV/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints
+
+# Machine Learning Models & Large Datasets
+datasets/*.csv
+!datasets/.gitkeep
+models/*.pkl
+models/*.pt
+!models/.gitkeep
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PlatformIO & ESP-IDF Build Artifacts
+.pio/
+build/
+sdkconfig
+*.bin
+*.elf
+
+# Logs
+*.log
