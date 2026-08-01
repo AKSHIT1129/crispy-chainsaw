@@ -12,14 +12,14 @@ By analyzing these signal changes using cheap ESP32 microcontrollers, our system
 
 ---
 
-## Simple Setup & Diagrams
+## System Architecture & Diagrams
 
-| 1. Hardware Setup Across Wall | 2. Wi-Fi Signal Change (Empty vs Motion) |
+| 1. Through-Wall Sensing Setup | 2. CSI Broadcast Topology |
 | :---: | :---: |
-| ![Hardware Setup Sketch](docs/images/hardware_setup.png) | ![Signal Change Sketch](docs/images/csi_visualization.png) |
+| ![Through Wall Sensing Setup](docs/images/hardware_setup.png) | ![CSI Broadcast Topology](docs/images/csi_visualization.png) |
 
-### 3. Simple 3-Step Detection Flowchart
-![Simple 3-Step Flowchart Sketch](docs/images/motion_detection_demo.png)
+### 3. Active Ping & CSI Extraction Flow
+![Active Ping and CSI Flow](docs/images/motion_detection_demo.png)
 
 ---
 
