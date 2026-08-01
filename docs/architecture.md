@@ -1,5 +1,9 @@
 # System Architecture: Through-Wall Wi-Fi Sensing
 
+## Hardware & Signal Flow Overview
+
+![Hardware Setup](images/hardware_setup.png)
+
 ## Signal Flow Diagram
 
 ```

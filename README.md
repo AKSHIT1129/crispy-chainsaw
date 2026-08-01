@@ -12,6 +12,17 @@ As Wi-Fi signals propagate through obstacles, moving human bodies reflect and sc
 
 ---
 
+## Demo & Visualizations
+
+| Hardware Setup & Radio Propagation | Real-Time CSI Signal Visualization |
+| :---: | :---: |
+| ![Hardware Setup](docs/images/hardware_setup.png) | ![CSI Signal Visualization](docs/images/csi_visualization.png) |
+
+### Live Through-Wall Motion Detection Dashboard
+![Motion Detection Dashboard](docs/images/motion_detection_demo.png)
+
+---
+
 ## Hardware Requirements
 
 | Component | Quantity | Description |
@@ -46,6 +57,7 @@ crispy-chainsaw/
 ├── datasets/                  # Logged CSI subcarrier CSV datasets
 ├── models/                    # Serialized machine learning models (.pkl)
 ├── docs/                      # System architecture and mathematical formulations
+│   └── images/                # Demo pictures, hardware setup, and signal graphs
 ├── requirements.txt           # Python package dependencies
 ├── .gitignore
 └── README.md
