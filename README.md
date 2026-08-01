@@ -4,22 +4,22 @@ An open-source hardware and software framework for detecting human presence and 
 
 ---
 
-## Overview
+## How It Works (In Simple Terms)
 
-Traditional through-wall motion detection relies on specialized mmWave radar or thermal imaging systems. This project utilizes standard 2.4 GHz / 5 GHz Wi-Fi radio signals transmitted by low-cost microcontrollers (ESP32).
+Wi-Fi signals can pass right through solid walls. When a room is empty, the Wi-Fi signal stays smooth and steady. But when a person walks behind the wall, their body bounces and disrupts the Wi-Fi radio waves!
 
-As Wi-Fi signals propagate through obstacles, moving human bodies reflect and scatter subcarrier radio waves. By capturing CSI matrices (Amplitude and Phase per OFDM subcarrier), filtering static environmental clutter, and extracting micro-Doppler signals, the system classifies human presence and motion behind walls in real time.
+By analyzing these signal changes using cheap ESP32 microcontrollers, our system detects human presence and movement behind walls in real time.
 
 ---
 
-## Demo & Visualizations
+## Simple Setup & Diagrams
 
-| Hardware Setup & Radio Propagation | Real-Time CSI Signal Visualization |
+| 1. Hardware Setup Across Wall | 2. Wi-Fi Signal Change (Empty vs Motion) |
 | :---: | :---: |
-| ![Hardware Setup](docs/images/hardware_setup.png) | ![CSI Signal Visualization](docs/images/csi_visualization.png) |
+| ![Hardware Setup Sketch](docs/images/hardware_setup.png) | ![Signal Change Sketch](docs/images/csi_visualization.png) |
 
-### Live Through-Wall Motion Detection Dashboard
-![Motion Detection Dashboard](docs/images/motion_detection_demo.png)
+### 3. Simple 3-Step Detection Flowchart
+![Simple 3-Step Flowchart Sketch](docs/images/motion_detection_demo.png)
 
 ---
 
@@ -99,13 +99,13 @@ python python/train_classifier.py --empty datasets/empty_room.csv --motion datas
 
 ---
 
-## Signal Processing Pipeline
+## How the Software Detects Motion
 
-1. **Packet Capture:** Extracts OFDM subcarrier amplitude and phase matrices.
-2. **Phase Sanitization:** Eliminates phase linear drift caused by clock desynchronization.
-3. **Static Clutter Filtering:** Applies a 4th-order Butterworth bandpass filter (0.2 Hz – 10 Hz) to remove static reflections.
-4. **Dimensionality Reduction:** Applies Principal Component Analysis (PCA) across subcarriers.
-5. **Classification:** Computes statistical feature vectors for Random Forest / SVM evaluation.
+1. **Catch Wi-Fi Waves:** ESP32 captures incoming Wi-Fi signal strength values.
+2. **Remove Static Clutter:** Filters out still objects like walls and furniture.
+3. **Isolate Movement:** Focuses only on live changes caused by human body movement.
+4. **Train Model:** Machine learning compares normal empty room signals vs motion signals.
+5. **Real-time Alert:** Instantly alerts when someone walks behind the wall!
 
 ---
 

@@ -1,55 +1,29 @@
-# System Architecture: Through-Wall Wi-Fi Sensing
+# How It Works: Simple Through-Wall Wi-Fi Motion Sensing
 
-## Hardware & Signal Flow Overview
+## 1. Setup Overview
 
 ![Hardware Setup](images/hardware_setup.png)
 
-## Signal Flow Diagram
+### Quick Explanation:
+1. **Transmitter (ESP32 Tx):** Sends continuous Wi-Fi radio signals that pass through walls.
+2. **Obstacle / Movement Area:** In an empty room, the Wi-Fi waves travel cleanly. When a person walks behind the wall, their body reflects and disrupts the Wi-Fi waves.
+3. **Receiver (ESP32 Rx):** Measures the incoming Wi-Fi signal strength and sends the data to a laptop via USB.
 
-```
-[ESP32 Tx (Access Point)] 
-       │
-       │ Wi-Fi 2.4 GHz OFDM Packets (Beacons @ 50 Hz)
-       ▼
- ┌──────────┐
- │  WALL    │  (Radio Waves Penetrate Drywall / Brick)
- └──────────┘
-       │
-       ▼
- [Human Body Reflection & Scattering] ──> Doppler Shifts & Subcarrier Attenuation
-       │
-       ▼
-[ESP32 Rx (Station)] ──> Extracts `wifi_csi_info_t` Matrix
-       │
-       │ USB Serial (115200 Baud)
-       ▼
-[Python Processing Host]
-  ├── 1. `serial_collector.py` (Stream Reader)
-  ├── 2. `preprocess.py` (Butterworth Filter & PCA Noise Reduction)
-  ├── 3. `real_time_plotter.py` (Live Spectrogram & Waveform Visualizer)
-  └── 4. `train_classifier.py` (Random Forest / SVM Presence Classifier)
-```
+---
 
-## Key Mathematics & Mathematical Principles
+## 2. Signal Comparison
 
-### 1. Channel State Information (CSI) Representation
-Wi-Fi OFDM splits a radio channel into multiple subcarriers (typically 52 or 64 sub-frequencies). For each subcarrier \( i \), the CSI model is:
+![Signal Comparison](images/csi_visualization.png)
 
-\[
-Y_i = H_i \cdot X_i + N_i
-\]
+* **Empty Room (No Motion):** Wi-Fi signal stays smooth and steady.
+* **Person Moving Behind Wall:** Wi-Fi signal fluctuates, creating noticeable wave ripples.
 
-Where:
-* \( X_i \) is the transmitted signal.
-* \( Y_i \) is the received signal.
-* \( N_i \) is Gaussian noise.
-* \( H_i \) is the **Channel Frequency Response (CFR)**:
+---
 
-\[
-H_i = |H_i| e^{j \angle H_i}
-\]
+## 3. How Motion is Detected (3 Simple Steps)
 
-Where \( |H_i| \) is the **Amplitude** and \( \angle H_i \) is the **Phase**.
+![How It Works Flowchart](images/motion_detection_demo.png)
 
-### 2. Static Clutter Removal (Butterworth High-Pass Filter)
-Walls and furniture contribute static reflections that create a DC offset in \( |H_i| \). Applying a 4th-order Butterworth bandpass filter (0.2 Hz – 10 Hz) removes static wall clutter while retaining dynamic human motion frequencies.
+1. **Send Signals:** ESP32 transmitter sends Wi-Fi packets continuously.
+2. **Catch Signal Changes:** Receiver logs how the Wi-Fi waves bend and bounce off a moving body.
+3. **Trigger Alert:** Python script filters out stationary objects (walls/furniture) and detects motion in real time!
