@@ -62,7 +62,6 @@ crispy-chainsaw/
 ├── .gitignore
 └── README.md
 ```
-
 ---
 
 ## Getting Started
